@@ -32,15 +32,28 @@
       };
 
       socket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (data.tipo === 'localizacao' && data.pedidoId === pedidoId) {
-          if (!marker) {
-            marker = L.marker([data.lat, data.lng]).addTo(map);
-          } else {
-            marker.setLatLng([data.lat, data.lng]);
-          }
-          map.setView([data.lat, data.lng]);
-        }
-      };
+  const data = JSON.parse(event.data);
+  if (data.tipo === 'localizacao' && data.pedidoId === pedidoId) {
+    const novaLatLng = [data.lat, data.lng];
+
+    if (!marker) {
+      marker = L.marker(novaLatLng).addTo(map);
+      map.setView(novaLatLng, 15); // Centraliza no início
+    } else {
+      marker.setLatLng(novaLatLng); // Atualiza posição
+    }
+
+    // Opcional: adicionar um pequeno círculo de precisão ou efeito
+    if (typeof circle === 'undefined') {
+      circle = L.circle(novaLatLng, { radius: 10, color: 'blue' }).addTo(map);
+    } else {
+      circle.setLatLng(novaLatLng);
+    }
+
+    // Se quiser que o mapa acompanhe sempre o ponto (descomente):
+     map.setView(novaLatLng);
+  }
+};
+
     }
   </script>
